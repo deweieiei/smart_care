@@ -1,0 +1,63 @@
+1. Flutter New Application (Ctrl+Shift+p)
+
+2. เรียก emulator แล้วเซ็ตเป็นไทย
+
+3. สร้าง l10n.yaml
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.dart
+output-class: S
+
+4. เพิ่ม lib/l10n/app_en.arb
+{
+    "press_msg": "You have pushed the button this many times:",
+    "@press_msg": {
+      "description": "press message"
+    },
+    "counter_msg": " {count} times",
+    "@counter_msg": {
+      "placeholders": {
+        "count": {}
+      }
+    }
+}
+
+5. เพิ่ม lib/l10n/app_th.arb 
+{
+    "press_msg": "คุณกดปุ่มนี้หลายครั้ง:",
+    "counter_msg": "{count} ครั้ง"  
+}
+
+6. เพิ่มใน pubspec.yml
+dependencies:
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.17.0 
+flutter:
+  generate: true
+
+7. เรียก debug
+
+8. ไฟล์ main.dart ทำตามนี้
+เพิ่ม
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+ตรง return const MaterialApp( เพิ่ม
+      localizationsDelegates: const [
+        S.delegate, 
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: S.supportedLocales,
+
+แก้ 'You have pushed the button this many times:',
+เป็น S.of(context)!.press_msg,
+เอาค่า const ออกด้วยเพราะข้อความมันเอามาแบบ run time
+แก้ '$_counter',
+เป็น S.of(context)!.counter_msg(_counter),
+
+9. ทุกครั้งที่มีการแก้ไข lib/l10n/* ให้ Save ไฟล์ pubspec.yaml 
+เพื่อให้ม้นอัปเดตโค้ตใน .dart_tools/gen_l10n
+ถ้ามันไม่สร้างโค้ดให้ก็รันคำสั่ง
+flutter gen-l10n
